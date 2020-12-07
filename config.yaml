@@ -1,0 +1,8 @@
+refreshTime: 10
+products:
+      - 
+        name: "5900x"
+        url: "https://www.digitec.ch/fr/s1/product/amd-ryzen-9-5900x-am4-370ghz-12-core-processeurs-13987917"
+      - 
+        name: "3080 STRIX"
+        url: "https://www.digitec.ch/fr/s1/product/asus-geforce-rog-strix-rtx-3080-o10g-gaming-10go-cartes-graphiques-13751783"

@@ -2,7 +2,7 @@ import winsound
 import requests
 import asyncio
 import time
-import json
+import yaml
 import sys
 
 from colorama import init, Fore, Back, Style
@@ -47,17 +47,18 @@ async def check(name, url, wait):
 # ===================================================================================================================================================================== #
 
 async def main():
-    items = [
-            ("5900x", "https://www.digitec.ch/fr/s1/product/amd-ryzen-9-5900x-am4-370ghz-12-core-processeurs-13987917"),
-            ("3080 STRIX", "https://www.digitec.ch/fr/s1/product/asus-geforce-rog-strix-rtx-3080-o10g-gaming-10go-cartes-graphiques-13751783"),
-            ]
-    wait = 10
+    with open("config.yaml", "r") as yamlfile:
+        cfg = yaml.safe_load(yamlfile)
+
+    wait = cfg['refreshTime']
+    items = cfg['products']
+    wait = cfg['refreshTime']
 
     tasks = []
 
     init()
     for item in items:
-        tasks.append(asyncio.create_task(check(item[0], item[1], wait)))
+        tasks.append(asyncio.create_task(check(item['name'], item['url'], wait)))
 
     for task in tasks:
         await task
