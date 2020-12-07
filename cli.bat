@@ -1,2 +1,2 @@
 
-python .\soup.py
+python ./src/cli/soup.py

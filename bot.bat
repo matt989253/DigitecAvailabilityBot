@@ -1,2 +1,2 @@
 
-python .\bot.py
+python ./src/bot/bot.py
