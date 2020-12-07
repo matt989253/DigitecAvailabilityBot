@@ -19,10 +19,14 @@ async def check(name, url, wait):
 
         now = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
 
-        price = soup.select('html body div#__next div div div main#pageContent div div div div div.productDetail div strong')[0].text.strip()
+        price = soup.select(
+            'html body div#__next div div div main#pageContent div div div div div.productDetail div strong'
+        )[0].text.strip()
         price = setColor(price, Fore.CYAN)
 
-        availability = soup.select('html body div div div div main#pageContent div div div div div.productDetail div span span span.availabilityText div div')[0].text
+        availability = soup.select(
+            'html body div div div div main#pageContent div div div div div.productDetail div span span span.availabilityText div div'
+            )[0].text
 
         color = ""
         if "Livré" in availability:
@@ -44,7 +48,7 @@ async def check(name, url, wait):
         print ("%s - %s (%s) - %s" % (now, name, price, availability), flush = True)
         await asyncio.sleep(wait)
 
-# ===================================================================================================================================================================== #
+# ====================================================================================================================================== #
 
 async def main():
     with open("config.yaml", "r") as yamlfile:
@@ -65,6 +69,6 @@ async def main():
 
     print ("Successfully terminated")
 
-# ===================================================================================================================================================================== #
+# ====================================================================================================================================== #
 
 asyncio.run(main())
