@@ -17,9 +17,10 @@ while True:
     soup = BeautifulSoup(page.content, 'html.parser')
 
     now = datetime.now().strftime("%d/%m/%Y %H:%M:%S")    
-    name = soup.select('.productHeaderTitle__Title-gtvrqo-0')[0].text
-    availability = soup.select('.Z14t')[0].text
-    price = soup.select('.Z1eh > span:nth-child(1) > strong:nth-child(1)')[0].text.strip()
+    name = soup.select('html body div#__next div div div main#pageContent div div div div div.productDetail h1')[0].text
+
+    availability = soup.select('html body div div div div main#pageContent div div div div div.productDetail div span span span.availabilityText div div')[0].text
+    price = soup.select('html body div#__next div div div main#pageContent div div div div div.productDetail div span strong')[0].text.strip()
 
     print ("%s - %s (%s) - %s%s%s" % (now, name, price, Fore.RED + Style.BRIGHT, availability, Style.RESET_ALL), flush = True)
     time.sleep(wait)
