@@ -56,7 +56,6 @@ async def main():
 
     wait = cfg['refreshTime']
     items = cfg['products']
-    wait = cfg['refreshTime']
 
     tasks = []
 
