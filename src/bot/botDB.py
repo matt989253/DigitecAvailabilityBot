@@ -1,6 +1,7 @@
 import requests
 import logging
 import yaml
+from src.bot.db import Database
 
 from bs4 import BeautifulSoup
 
@@ -8,6 +9,7 @@ from telegram import Update
 from telegram.ext import Updater, CommandHandler, CallbackContext
 
 # Load config
+
 with open("config.yaml", "r") as yamlfile:
     cfg = yaml.safe_load(yamlfile)
 
@@ -34,7 +36,7 @@ def start(update, context):
 
     context.bot.send_message(chat_id = update.effective_chat.id, text = text)
 
-def alertAvailableOnly(context):
+def alert_available_only(context):
     for item in items:
         name = item['name']
         url = item['url']
@@ -68,8 +70,6 @@ def alert(context):
         text = 'Name: %s\nPrice: %s\nStatus: %s\nUrl: %s' % (name, price, availability, url)
         context.bot.send_message(job.context, text = text)
 
-        
-
 def remove_job_if_exists(name, context):
     current_jobs = context.job_queue.get_jobs_by_name(name)
     if not current_jobs:
@@ -81,34 +81,39 @@ def remove_job_if_exists(name, context):
 def subscribe(update: Update, context: CallbackContext) -> None:
     chat_id = update.message.chat_id
     job_removed = remove_job_if_exists(str(chat_id), context)
-    context.job_queue.run_repeating(alertAvailableOnly, first = 0, interval = wait, context = chat_id, name = str(chat_id))
+    context.job_queue.run_repeating(callback = alert_available_only, first = 0, interval = wait, context = chat_id, name = str(chat_id))
 
-    text = 'Successfully subscribed to available items! I will check these every %s seconds' % wait if not job_removed else 'You were already subscribed to something. Your subscription was updated'
+    text = 'Successfully subscribed to available items! I will check these every %s seconds' % wait \
+        if not job_removed else 'You were already subscribed to something. Your subscription was updated'
     update.message.reply_text(text)
 
-def subscribeAll(update: Update, context: CallbackContext) -> None:
+def subscribe_all(update: Update, context: CallbackContext) -> None:
     chat_id = update.message.chat_id
     job_removed = remove_job_if_exists(str(chat_id), context)
-    context.job_queue.run_repeating(alert, first = 0, interval = wait, context = chat_id, name = str(chat_id))
+    context.job_queue.run_repeating(callback = alert, first = 0, interval = wait, context = chat_id, name = str(chat_id))
 
-    text = 'Successfully subscribed to all items availability! I will check these every %s seconds' % wait if not job_removed else 'You were already subscribed to something. Your subscription was updated'
+    text = 'Successfully subscribed to all items availability! I will check these every %s seconds' % wait \
+        if not job_removed else 'You were already subscribed to something. Your subscription was updated'
     update.message.reply_text(text)
 
 
 def unsubscribe(update: Update, context: CallbackContext) -> None:
     chat_id = update.message.chat_id
     job_removed = remove_job_if_exists(str(chat_id), context)
-    text = 'Successfully unsubscribed!' if job_removed else 'You are not subscribed. Type /subscribe or /subscribeAll to subscribe'
+    text = 'Successfully unsubscribed!' \
+        if job_removed else 'You are not subscribed. Type /subscribe or /subscribeAll to subscribe'
     update.message.reply_text(text)
 
 
 def main():
+    database = Database("")
+
     updater = Updater(token = token)
     dispatcher = updater.dispatcher
 
     start_handler = CommandHandler('start', start)
     subscribe_handler = CommandHandler('subscribe', subscribe)
-    subscribe_all_handler = CommandHandler('subscribe_all', subscribeAll)
+    subscribe_all_handler = CommandHandler('subscribe_all', subscribe_all)
     unsubscribe_handler = CommandHandler('unsubscribe', unsubscribe)
 
     dispatcher.add_handler(start_handler)
